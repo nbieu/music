@@ -8,7 +8,12 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var videoIDs = [
   'meGeGXVFsPw', 
   'Jy6jJGIIUos', 
-  '7gMRMDWxTfo'
+  '7gMRMDWxTfo',
+  'vFVR_s2if7E',
+  '_CIFxSze_0w',
+  'ZaeYEX3qgRY',
+  'qqyzitqYvXA',
+  '3DOkxQ3HDXE'
 ]; // Replace with actual video IDs
 var currentVideoIndex = 0;
 var player;
