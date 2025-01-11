@@ -16,7 +16,11 @@ var videoIDs = [
   '3DOkxQ3HDXE',
   'Gb2D-fQiHLI',
   'tKVzm0SBYtQ',
-  'HHly9wFXYd8'
+  'HHly9wFXYd8',
+  'kNYaN7fVAKo',
+  'WaXhd_U4rp0',
+  'JFlHw2raQZM',
+  'shBbIhxh0iM'
 ]; // Replace with actual video IDs
 var currentVideoIndex = 0;
 var player;
