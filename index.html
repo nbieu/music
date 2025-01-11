@@ -1,23 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <div id="player"></div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="script.js"></script>
+    <link rel="apple-touch-icon" 
+            type="image/png" 
+            href="assets/favicon.png" />
+
+    <meta name="apple-mobile-web-app-title" 
+            content="Music">
+
+    <link rel="shortcut icon" 
+        type="image/x-icon" 
+        href="assets/favicon.ico" />
+
+    <link rel="mask-icon" 
+        type="image/x-icon" 
+        href="assets/favicon.svg" 
+        color="#111" />
+
+
+    <title>Music</title>
+
+    <script src="assets/stopExecutionOnTimeout.js"></script>
+
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900'>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css'>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vuetify@2.2.8/dist/vuetify.min.css'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Material+Icons'>
+  
+    <script>
+        window.console = window.console || function(t) {};
+    </script>
+  
+</head>
+
+<body translate="no">
+    <div id="app">
+    <v-app>
+        <v-container>
+        <v-content>
+            <v-row justify="space-around">
+            <div id="player"></div>
+            </v-row>
+        </v-content>
+        <v-container>
+    </v-app>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.2.14/vuetify.min.js'></script>
+    <script id="rendered-js" src="assets/script.js"></script>
 </body>
 </html>
