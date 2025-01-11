@@ -41,7 +41,7 @@ var vueApp = new Vue({
       this.player = new YT.Player("player", {
         width: 600,
         height: 400,
-        videoId: "Xa0Q0J5tOP0",
+        videoId: videoIDs[currentVideoIndex],
         events: {
           onReady: _.onPlayerReady,
           onStateChange: _.onPlayerStateChange } });
