@@ -7,21 +7,23 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // Create an array of YouTube video IDs
 var videoIDs = [
-  'meGeGXVFsPw', 
-  'Jy6jJGIIUos', 
-  '7gMRMDWxTfo',
-  'vFVR_s2if7E',
-  '_CIFxSze_0w',
-  'ZaeYEX3qgRY',
-  'qqyzitqYvXA',
-  '3DOkxQ3HDXE',
-  'Gb2D-fQiHLI',
-  'tKVzm0SBYtQ',
-  'HHly9wFXYd8',
-  'kNYaN7fVAKo',
-  'WaXhd_U4rp0',
-  'JFlHw2raQZM',
-  'shBbIhxh0iM'
+  'https://youtu.be/meGeGXVFsPw', 
+  'https://youtu.be/Jy6jJGIIUos', 
+  'https://youtu.be/7gMRMDWxTfo',
+  'https://youtu.be/vFVR_s2if7E',
+  'https://youtu.be/_CIFxSze_0w',
+  'https://youtu.be/ZaeYEX3qgRY',
+  'https://youtu.be/qqyzitqYvXA',
+  'https://youtu.be/3DOkxQ3HDXE',
+  'https://youtu.be/Gb2D-fQiHLI',
+  'https://youtu.be/tKVzm0SBYtQ',
+  'https://youtu.be/HHly9wFXYd8',
+  'https://youtu.be/kNYaN7fVAKo',
+  'https://youtu.be/WaXhd_U4rp0',
+  'https://youtu.be/2dpsU2XTI8k',
+  'https://youtu.be/shBbIhxh0iM',
+  'https://youtu.be/9BgNVW4T1eo',
+  'https://youtu.be/aAhW9gUUJCA'
 ]; // Replace with actual video IDs
 var currentVideoIndex = 0;
 var player;
@@ -36,12 +38,13 @@ var vueApp = new Vue({
   },
   methods: {
     initYoutube() {
+      var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
       const _ = this;
       console.log("initYoutube");
       this.player = new YT.Player("player", {
         width: 600,
         height: 400,
-        videoId: videoIDs[currentVideoIndex],
+        videoId: x,
         events: {
           onReady: _.onPlayerReady,
           onStateChange: _.onPlayerStateChange } });
@@ -59,7 +62,8 @@ var vueApp = new Vue({
           if (currentVideoIndex >= videoIDs.length) {
             currentVideoIndex = 0
           }
-          this.player.loadVideoById(videoIDs[currentVideoIndex]);
+          var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
+          this.player.loadVideoById(x);
       }
     } } });
 
@@ -67,3 +71,9 @@ onYouTubeIframeAPIReady = () => {
   console.log("onYouTubeIframeAPIReady");
   vueApp.initYoutube();
 };
+
+function getYouTubeVideoID(url) {
+  const regex = /(?:https?:\/\/(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/))([^"&?\/\s]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
