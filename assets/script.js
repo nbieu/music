@@ -23,7 +23,12 @@ var videoIDs = [
   'https://youtu.be/2dpsU2XTI8k',
   'https://youtu.be/shBbIhxh0iM',
   'https://youtu.be/9BgNVW4T1eo',
-  'https://youtu.be/aAhW9gUUJCA'
+  'https://youtu.be/aAhW9gUUJCA',
+  'https://youtu.be/ulQoJ91jgYo',
+  'https://youtu.be/riJGGRviuuU',
+  'https://youtu.be/hO7jliJjM6s',
+  'https://youtu.be/7ATeQTV79A4',
+  'https://youtu.be/wrkCeXVdekM'
 ]; // Replace with actual video IDs
 var currentVideoIndex = 0;
 var player;
@@ -38,6 +43,7 @@ var vueApp = new Vue({
   },
   methods: {
     initYoutube() {
+      videoIDs = shuffleArray(videoIDs)
       var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
       const _ = this;
       console.log("initYoutube");
@@ -76,4 +82,15 @@ function getYouTubeVideoID(url) {
   const regex = /(?:https?:\/\/(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/))([^"&?\/\s]{11})/;
   const match = url.match(regex);
   return match ? match[1] : null;
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+      // Generate a random index
+      const j = Math.floor(Math.random() * (i + 1));
+      
+      // Swap elements at index i and j
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
