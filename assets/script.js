@@ -56,9 +56,10 @@ var vueApp = new Vue({
       console.log("Player state changed", evt);
       if (evt.data == YT.PlayerState.ENDED) {
           currentVideoIndex++;
-          if (currentVideoIndex < videoIDs.length) {
-              player.loadVideoById(videoIDs[currentVideoIndex]);
+          if (currentVideoIndex >= videoIDs.length) {
+            currentVideoIndex = 0
           }
+          this.player.loadVideoById(videoIDs[currentVideoIndex]);
       }
     } } });
 
