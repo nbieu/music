@@ -41,7 +41,10 @@
         <v-container>
         <v-content>
             <v-row justify="space-around">
-            <div id="player"></div>
+                <div id="player"></div>
+            </v-row>
+            <v-row>
+                <div id="output"></div>
             </v-row>
         </v-content>
         <v-container>
@@ -50,6 +53,44 @@
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.2.14/vuetify.min.js'></script>
+    <script>
+
+var videoIDs = [
+  'https://youtu.be/meGeGXVFsPw', 
+  'https://youtu.be/Jy6jJGIIUos', 
+  'https://youtu.be/7gMRMDWxTfo',
+  'https://youtu.be/vFVR_s2if7E',
+  'https://youtu.be/_CIFxSze_0w',
+  'https://youtu.be/ZaeYEX3qgRY',
+  'https://youtu.be/qqyzitqYvXA',
+  'https://youtu.be/3DOkxQ3HDXE',
+  'https://youtu.be/Gb2D-fQiHLI',
+  'https://youtu.be/tKVzm0SBYtQ',
+  'https://youtu.be/HHly9wFXYd8',
+  'https://youtu.be/kNYaN7fVAKo',
+  'https://youtu.be/WaXhd_U4rp0',
+  'https://youtu.be/2dpsU2XTI8k',
+  'https://youtu.be/shBbIhxh0iM',
+  'https://youtu.be/9BgNVW4T1eo',
+  'https://youtu.be/aAhW9gUUJCA',
+  'https://youtu.be/ulQoJ91jgYo',
+  'https://youtu.be/riJGGRviuuU',
+  'https://youtu.be/hO7jliJjM6s',
+  'https://youtu.be/7ATeQTV79A4',
+  'https://youtu.be/wrkCeXVdekM'
+];
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+      // Generate a random index
+      const j = Math.floor(Math.random() * (i + 1));
+      
+      // Swap elements at index i and j
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+videoIDs = shuffleArray(videoIDs)
+    </script>
     <script id="rendered-js" src="assets/script.js"></script>
 </body>
 </html>
