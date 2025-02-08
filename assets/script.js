@@ -16,6 +16,14 @@ var vueApp = new Vue({
 
   },
   methods: {
+    onNext() {
+      currentVideoIndex++;
+      if (currentVideoIndex >= videoIDs.length) {
+        currentVideoIndex = 0
+      }
+      var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
+      this.player.loadVideoById(x);
+    },
     initYoutube() {
       var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
       const _ = this;
@@ -37,12 +45,7 @@ var vueApp = new Vue({
     onPlayerStateChange(evt) {
       console.log("Player state changed", evt);
       if (evt.data == YT.PlayerState.ENDED) {
-          currentVideoIndex++;
-          if (currentVideoIndex >= videoIDs.length) {
-            currentVideoIndex = 0
-          }
-          var x = getYouTubeVideoID(videoIDs[currentVideoIndex])
-          this.player.loadVideoById(x);
+          _.onNext()
       }
     } } });
 
