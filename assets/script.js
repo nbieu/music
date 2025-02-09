@@ -45,7 +45,7 @@ var vueApp = new Vue({
     onPlayerStateChange(evt) {
       console.log("Player state changed", evt);
       if (evt.data == YT.PlayerState.ENDED) {
-          _.onNext()
+          this.onNext()
       }
     } } });
 
