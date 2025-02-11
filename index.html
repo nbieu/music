@@ -44,7 +44,8 @@
                 <div id="player"></div>
             </v-row>
             <v-row justify="center" style="padding-top: 22px;">
-                <v-btn @click="onNext" ref="next">Next</v-btn>
+                <v-btn @click="onNext" ref="next">Next</v-btn>&nbsp;
+                <input type="checkbox" ref="repeat" v-model="is_repeat"> Repeat
             </v-row>
         </v-content>
         <v-container>

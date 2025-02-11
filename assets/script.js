@@ -12,8 +12,9 @@ var vueApp = new Vue({
   vuetify: new Vuetify(),
   data: function () {
     return {
-      player: null };
-
+      player: null,
+      is_repeat: false
+    };
   },
   methods: {
     onNext() {
@@ -45,6 +46,9 @@ var vueApp = new Vue({
     onPlayerStateChange(evt) {
       console.log("Player state changed", evt);
       if (evt.data == YT.PlayerState.ENDED) {
+          if (this.is_repeat) {
+            currentVideoIndex--;
+          }
           this.onNext()
       }
     } } });
