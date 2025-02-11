@@ -13,7 +13,10 @@ var vueApp = new Vue({
   data: function () {
     return {
       player: null,
-      is_repeat: false
+      is_repeat: false,
+      table_data: [
+        { a: 'Đồng Tháp', b: 'ĐC', c: '14 08 92 77 36 50 25 61', d: '2025-02-17' }
+      ]
     };
   },
   methods: {

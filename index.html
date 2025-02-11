@@ -32,6 +32,23 @@
     <script>
         window.console = window.console || function(t) {};
     </script>
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
   
 </head>
 
@@ -39,15 +56,39 @@
     <div id="app">
     <v-app>
         <v-container>
-        <v-content>
-            <v-row justify="space-around">
-                <div id="player"></div>
-            </v-row>
-            <v-row justify="center" style="padding-top: 22px;">
-                <v-btn @click="onNext" ref="next">Next</v-btn>&nbsp;
-                <input type="checkbox" ref="repeat" v-model="is_repeat"> Repeat
-            </v-row>
-        </v-content>
+        
+            <v-col cols="12" md="6">
+                <v-row justify="space-around">
+                    <div id="player"></div>
+                </v-row>
+                <v-row justify="center" style="padding-top: 22px;">
+                    <v-btn @click="onNext" ref="next">Next</v-btn>&nbsp;
+                    <input type="checkbox" ref="repeat" v-model="is_repeat"> Repeat
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-row>
+                    <table>
+                        <thead>
+                          <tr>
+                            <th>Đài vé số</th>
+                            <th>Giải</th>
+                            <th>Số may mắn</th>
+                            <th>Ngày dự đoán</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(row, index) in table_data" :key="index">
+                            <td>{{ row.a }}</td>
+                            <td>{{ row.b }}</td>
+                            <td>{{ row.c }}</td>
+                            <td>{{ row.d }}</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </v-row>                
+            </v-col>
+        
         <v-container>
     </v-app>
     </div>
