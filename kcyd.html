@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="apple-touch-icon" 
+            type="image/png" 
+            href="assets/favicon.png" />
+
+    <meta name="apple-mobile-web-app-title" 
+            content="Music">
+
+    <link rel="shortcut icon" 
+        type="image/x-icon" 
+        href="assets/favicon.ico" />
+
+    <link rel="mask-icon" 
+        type="image/x-icon" 
+        href="assets/favicon.svg" 
+        color="#111" />
+
+
+    <title>Music</title>
+
+    <script src="assets/stopExecutionOnTimeout.js"></script>
+
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900'>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css'>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vuetify@2.2.8/dist/vuetify.min.css'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Material+Icons'>
+  
+    <script>
+        window.console = window.console || function(t) {};
+    </script>
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JKE76T4V7R"></script> 
+    <script src="assets/ga.js"></script>
+</head>
+
+<body translate="no">
+    <div id="app">
+    <v-app>
+        <v-container>
+        
+            <v-col cols="12" md="6">
+                <v-row justify="space-around">
+                    <div id="player"></div>
+                </v-row>
+                <v-row justify="center" style="padding-top: 22px;">
+                    <v-btn @click="onNext" ref="next">Next</v-btn>&nbsp;
+                    <input type="checkbox" ref="repeat" v-model="is_repeat"> Repeat
+                </v-row>
+            </v-col>
+            <!--v-col cols="12" md="6">
+                <v-row>
+                    <table>
+                        <thead>
+                          <tr>
+                            <th>Đài vé số</th>
+                            <th>Giải</th>
+                            <th>Số may mắn</th>
+                            <th>Ngày dự đoán</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(row, index) in table_data" :key="index">
+                            <td>{{ row.a }}</td>
+                            <td>{{ row.b }}</td>
+                            <td>{{ row.c }}</td>
+                            <td>{{ row.d }}</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </v-row>                
+            </v-col-->
+        <v-container>
+    </v-app>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.2.14/vuetify.min.js'></script>
+    <script>
+
+var videoIDs = [
+  'https://www.youtube.com/watch?v=AKiSfUb30Z8',
+  'https://www.youtube.com/watch?v=hmr4FJsf5nE'
+];
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+      // Generate a random index
+      const j = Math.floor(Math.random() * (i + 1));
+      
+      // Swap elements at index i and j
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+videoIDs = shuffleArray(videoIDs)
+    </script>
+    <script id="rendered-js" src="assets/script.js"></script>
+</body>
+</html>
