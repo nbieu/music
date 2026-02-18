@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Land</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* Style cho nội dung từ Quill */
+        .ql-container {
+            font-size: 1rem;
+            line-height: 1.75rem;
+            min-height: 200px;
+        }
+        .ql-editor {
+            font-size: 1rem;
+        }
+        .ql-toolbar.ql-snow {
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        .ql-container.ql-snow {
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-8">
+    <div id="loading-message" class="text-xl font-semibold text-gray-700">Đang tải dữ liệu...</div>
+
+    <div id="main-content" class="container mx-4 md:mx-auto p-6 bg-white rounded-xl shadow-lg hidden">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-600 mb-2">The New Land</h1>
+        </header>
+
+        <!-- Hiển thị User ID -->
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p class="text-sm text-gray-500">
+                Mã người dùng của bạn (dùng để xác định các bài viết của bạn):
+                <span id="userIdDisplay" class="font-mono text-gray-700 break-all"></span>
+            </p>
+        </div>
+
+        <!-- Form để thêm bài viết mới -->
+        <section class="mb-10 p-6 bg-blue-50 rounded-xl shadow-inner">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4">Thêm Bài Viết Mới</h2>
+            <form id="post-form" class="space-y-4">
+                <div>
+                    <label for="postTitle" class="block text-sm font-medium text-gray-700">Tiêu đề</label>
+                    <input type="text" id="postTitle" name="postTitle" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nội dung</label>
+                    <div id="postContent-editor" class="bg-white rounded-md shadow-sm border border-gray-300"></div>
+                </div>
+                <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    Đăng bài
+                </button>
+            </form>
+            <div id="message-box" class="mt-4 p-3 rounded-md hidden"></div>
+        </section>
+
+        <!-- Danh sách các bài viết -->
+        <section>
+            <h2 class="text-2xl font-bold text-blue-700 mb-4">Các Bài Viết Đã Chia Sẻ</h2>
+            <div id="posts-container" class="space-y-6">
+                <!-- Bài viết sẽ được thêm vào đây bằng JavaScript -->
+            </div>
+        </section>
+    </div>
+    
+    <!-- Modal xác nhận xóa bài viết -->
+    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Xác Nhận Xóa</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200 sm:ml-3 sm:w-auto">
+                        Xóa
+                    </button>
+                    <button id="cancelDeleteBtn" class="mt-3 px-4 py-2 bg-white text-gray-700 text-base font-medium rounded-md w-full shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200 sm:mt-0 sm:ml-3 sm:w-auto">
+                        Hủy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script type="module">
+        // Import tất cả các hàm Firebase cần thiết
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Biến toàn cục từ môi trường Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // const firebaseConfig = {
+        //     apiKey: "AIzaSyAagr2f_07tbSsSe5gWCpHwGzH7lgIOCcg",
+        //     authDomain: "the-new-land.firebaseapp.com",
+        //     projectId: "the-new-land",
+        //     storageBucket: "the-new-land.firebasestorage.app",
+        //     messagingSenderId: "552161094932",
+        //     appId: "1:552161094932:web:7525e2f64b1005909ca601",
+        //     measurementId: "G-XV281QMSPC"
+        // }
+
+        let db;
+        let auth;
+        let userId;
+        let docToDeleteId = null;
+        let quill; // Biến để lưu trữ đối tượng Quill
+
+        const loadingMessage = document.getElementById('loading-message');
+        const mainContent = document.getElementById('main-content');
+        const postsContainer = document.getElementById('posts-container');
+        const postForm = document.getElementById('post-form');
+        const messageBox = document.getElementById('message-box');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        function showMessage(text, isError = false) {
+            messageBox.textContent = text;
+            messageBox.className = `mt-4 p-3 rounded-md ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+            messageBox.classList.remove('hidden');
+        }
+
+        async function initFirebase() {
+            try {
+                // Khởi tạo Firebase App
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Lắng nghe trạng thái xác thực
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = userId;
+                        console.log("Người dùng đã đăng nhập với ID:", userId);
+                        loadingMessage.classList.add('hidden');
+                        mainContent.classList.remove('hidden');
+                        setupRealtimeListener();
+                        initEditor();
+                    } else {
+                        // Tự động đăng nhập ẩn danh nếu chưa có token
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Lỗi khi đăng nhập ẩn danh:", error);
+                            showMessage("Lỗi đăng nhập. Vui lòng thử lại.", true);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Lỗi khi khởi tạo Firebase:", error);
+                showMessage("Lỗi khi kết nối với máy chủ. Vui lòng kiểm tra console.", true);
+            }
+        }
+        
+        // Khởi tạo Quill Editor
+        function initEditor() {
+            const toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'], // định dạng chữ
+                ['blockquote', 'code-block'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                ['clean'] // xóa định dạng
+            ];
+        
+            quill = new Quill('#postContent-editor', {
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                theme: 'snow'
+            });
+        }
+
+        function setupRealtimeListener() {
+            if (!db) return;
+            // Đường dẫn collection công khai
+            const postsColRef = collection(db, `/artifacts/${appId}/public/data/blogPosts`);
+            const q = query(postsColRef);
+
+            onSnapshot(q, (snapshot) => {
+                const posts = [];
+                snapshot.forEach(doc => {
+                    posts.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sắp xếp bài viết theo thời gian giảm dần (mới nhất lên đầu)
+                posts.sort((a, b) => {
+                    if (a.createdAt && b.createdAt) {
+                        return b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime();
+                    }
+                    return 0;
+                });
+
+                renderPosts(posts);
+            }, (error) => {
+                console.error("Lỗi khi lấy dữ liệu:", error);
+                showMessage("Lỗi khi tải các bài viết. Vui lòng kiểm tra kết nối mạng.", true);
+            });
+        }
+
+        function renderPosts(posts) {
+            postsContainer.innerHTML = '';
+            if (posts.length === 0) {
+                postsContainer.innerHTML = '<p class="text-gray-500 text-center italic">Chưa có bài viết nào. Hãy là người đầu tiên đăng bài!</p>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200';
+                
+                // Format thời gian
+                const date = post.createdAt ? new Date(post.createdAt.toDate()) : new Date();
+                const formattedDate = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+
+                let deleteButton = '';
+                // Chỉ hiển thị nút xóa cho bài viết của người dùng hiện tại
+                if (post.userId === userId) {
+                    deleteButton = `<button data-id="${post.id}" class="delete-btn text-red-500 hover:text-red-700 transition-colors duration-200 ml-4 float-right">Xóa</button>`;
+                }
+
+                // Tạo một div tạm thời để trích xuất văn bản từ HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = post.content;
+                const textContent = tempDiv.textContent || tempDiv.innerText || "";
+                const words = textContent.split(/\s+/).filter(word => word.length > 0);
+                const isLongContent = words.length > 10;
+                const shortContent = isLongContent ? words.slice(0, 10).join(' ') + '...' : textContent;
+
+                postElement.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${post.title} ${deleteButton}</h3>
+                    <p class="text-sm text-gray-500 mb-4">Đăng bởi: <span class="font-bold">${post.userId === userId ? 'Bạn' : post.userId}</span> vào lúc ${formattedDate}</p>
+                    <div class="prose max-w-none text-gray-700">
+                        <span class="post-summary">${shortContent}</span>
+                        ${isLongContent ? `<span class="post-full-content hidden">${post.content}</span><a href="#" class="read-more-link ml-2 text-blue-500 hover:underline">Xem thêm</a>` : ''}
+                    </div>
+                `;
+                postsContainer.appendChild(postElement);
+            });
+
+            // Gắn sự kiện cho các nút xóa
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    docToDeleteId = e.target.dataset.id;
+                    deleteModal.classList.remove('hidden');
+                });
+            });
+
+            // Gắn sự kiện cho các liên kết Xem thêm/Rút gọn
+            document.querySelectorAll('.read-more-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const postContentDiv = e.target.closest('.prose');
+                    const summarySpan = postContentDiv.querySelector('.post-summary');
+                    const fullContentSpan = postContentDiv.querySelector('.post-full-content');
+                    
+                    if (fullContentSpan.classList.contains('hidden')) {
+                        // Hiển thị toàn bộ nội dung
+                        fullContentSpan.classList.remove('hidden');
+                        summarySpan.classList.add('hidden');
+                        e.target.textContent = 'Rút gọn';
+                    } else {
+                        // Rút gọn nội dung
+                        fullContentSpan.classList.add('hidden');
+                        summarySpan.classList.remove('hidden');
+                        e.target.textContent = 'Xem thêm';
+                    }
+                });
+            });
+        }
+
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('postTitle').value;
+            const content = quill.root.innerHTML; // Lấy nội dung HTML từ Quill
+            
+            if (!userId) {
+                showMessage("Lỗi: Chưa xác định được người dùng. Vui lòng thử lại.", true);
+                return;
+            }
+
+            try {
+                // Sử dụng serverTimestamp để có thời gian chính xác từ Firestore
+                await addDoc(collection(db, `/artifacts/${appId}/public/data/blogPosts`), {
+                    title: title,
+                    content: content,
+                    userId: userId,
+                    createdAt: serverTimestamp()
+                });
+
+                postForm.reset();
+                quill.setContents([]); // Reset nội dung Quill
+                showMessage("Bài viết đã được đăng thành công!", false);
+            } catch (error) {
+                console.error("Lỗi khi thêm tài liệu:", error);
+                showMessage("Lỗi khi đăng bài. Vui lòng kiểm tra console.", true);
+            }
+        });
+
+        // Xử lý xác nhận xóa
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (docToDeleteId) {
+                try {
+                    const docRef = doc(db, `/artifacts/${appId}/public/data/blogPosts`, docToDeleteId);
+                    await deleteDoc(docRef);
+                    showMessage("Bài viết đã được xóa thành công.", false);
+                } catch (error) {
+                console.error("Lỗi khi xóa tài liệu:", error);
+                showMessage("Lỗi khi xóa bài viết. Vui lòng kiểm tra console.", true);
+                } finally {
+                docToDeleteId = null;
+                deleteModal.classList.add('hidden');
+                }
+            }
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            docToDeleteId = null;
+            deleteModal.classList.add('hidden');
+        });
+
+        // Đóng modal khi nhấp ra ngoài
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                docToDeleteId = null;
+                deleteModal.classList.add('hidden');
+            }
+        });
+
+        // Bắt đầu ứng dụng khi cửa sổ tải xong
+        window.onload = initFirebase;
+    </script>
+</body>
+</html>
